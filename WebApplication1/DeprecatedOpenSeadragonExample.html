@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+	<meta charset="utf-8" />
+</head>
+<body>
+    <div id="openseadragon1" style="width: 800px; height: 600px;"></div>
+    <script src="/openseadragon/openseadragon.min.js"></script>
+    <script type="text/javascript">
+        var viewer = OpenSeadragon({
+            id: "openseadragon1",
+            prefixUrl: "/openseadragon/images/",
+            tileSources: {
+                Image: {
+                    xmlns: "http://schemas.microsoft.com/deepzoom/2008",
+                    Url: "dzi/img_files/",
+                    Format: "jpg",
+                    Overlap: "2",
+                    TileSize: "256",
+                    Size: {
+                        Height: "3000",
+                        Width: "2000"
+                    }
+                }
+            }
+        });
+  
+    </script>
+</body>
+</html>

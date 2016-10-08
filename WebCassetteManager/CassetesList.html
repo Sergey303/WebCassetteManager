@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+    <script src="Scripts/jquery-3.1.0.min.js"></script>
+    <script src="/Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script src="Scripts/knockout-3.4.0.debug.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script src="Scripts/knockout.punches.min.js"></script>
+    <link rel="import" href="/main image template.html">
+    <script>
+     $(function() {
+         var link = document.querySelector('link[rel=import]');
+         var content = link.import.querySelector('#intro-dm');
+         document.body.appendChild(content.cloneNode(true));
+     })
+    </script>
+    <script type="text/javascript" defer="defer">
+        ko.punches.enableAll();
+        var binded = false;
+        var loadingStatus = {};
+        var viewModel;
+        var hub;
+        function get(id, predicate) {
+            viewModel.notification();
+            return ko.pureComputed(function () {
+                viewModel.notification();
+                var key = id + '.' + predicate;
+                // alert(key);
+                var first = ko.utils.arrayFirst(viewModel.mydata(), function (item) {
+                    return item.key === key;
+                });
+                if (first == null) {
+                    if (loadingStatus[id + predicate] == null) {
+                        if(predicate[0]==='^')
+                            hub.server.getInverseValue(id, predicate.substring(1));
+                        else hub.server.getDirectValue(id, predicate);
+                        loadingStatus[id + predicate] = false;
+                    }
+                    return null;
+                }
+                return first.value;
+            }, this);
+        }
+        function NameorId(id) {
+            viewModel.notification();
+            return ko.pureComputed(function () {
+                var name = get(id, 'name')();
+                viewModel.notification();
+                return name === null ? id : name;
+            });
+        }
+        function ChangeMainId(id) {
+            return function () {
+                viewModel.id = id;
+                ko.utils.arrayPushAll(viewModel.mydata, []);
+                viewModel.notification.notifySubscribers();
+                viewModel.mydata.notifySubscribers();
+            };
+        }
+        function Count() {
+            viewModel.notification();
+            return ko.pureComputed(function () {
+                viewModel.notification();
+                return viewModel.mydata.length;
+            });
+        }
+
+        function Apply() {
+            $.each($('#main_image_template'),
+             function (i, template) {
+                 //alert(template);
+                 var uri = $(template).attr('uri');
+                 alert(uri);
+                 var parts = uri.split('.');
+                 ext = parts[parts.length - 1];
+                 if (ext === "jpg" || ext === "tif")
+                     template.innerHTML = '<iframe src="uri/dzi/{{$data}}" style="height: 1000px; width: 100%;"></iframe>';
+             });
+        }
+        $(function () {
+            ko.punches.enableAll();
+            hub = $.connection.cassettesHub;
+
+             viewModel = {
+                list: new ko.observableArray(),
+                notification: ko.observable(),
+                selectCassette: function (cassetteModel) {
+                    //hub.server.CallSparql(cassetteModel,
+                    //    "Select ?id ?name ?uri "
+                    //    + "{ ?id a ?type ;" +
+                    //    //"<uri>  ?uri;" +
+                    //    "!^<collection-item> ?anyCollection ." +
+                    //    "}");
+                //    hub.server.getItem(cassetteModel, viewModel.id);
+                },
+                id: ko.observable(),
+                mydata: ko.observableArray()
+            }
+
+
+            hub.client.get = function (casssetesList) {
+                viewModel.list = casssetesList;
+                //$.each(casssetesList, function(i, item) {
+                //    viewModel.list.arrayPushAll(ko.mapping.fromJS(item));
+                //});
+                if (!binded) {
+                    ko.applyBindings(viewModel);
+                    binded = true;
+                }
+            };
+            hub.client.getCasssetteContent = function (resultJson) {
+            }
+
+            hub.client.updateCassetteStatus = function (cassette) {
+                $.find(viewModel.list, function (cas) {
+                    return cas.Path === cassette.Path;
+                }).forEach(function (numb, item) {
+                    item.Status = cassette.Status;
+                    alert(item.Status);
+                });
+            }
+
+            var appendTriple = function (id, property, objvalue) {
+
+                var newkey = id + "." + property;
+                //   alert(newkey+' '+objvalue);
+                var array = get(id, property)();
+                if (array === null) {
+                    array = ko.observableArray([objvalue]);
+                    ko.utils.arrayPushAll(viewModel.mydata, [{ key: newkey, value: array }]);
+                } else if (array.indexOf(objvalue) === -1) ko.utils.arrayPushAll(array, [objvalue]);
+            }
+            hub.client.updateArrayProperty = function (id, property, objvalue, isObjectIri) {
+             //   alert(id+" "+ property +" "+ objvalue);
+                appendTriple(id, property, objvalue);
+                if (isObjectIri)
+                    appendTriple(objvalue, "^" + property, id);
+                Apply();
+            }
+            hub.client.alltripletsDone= function(id) {
+                loadingStatus[id] = true;
+            }
+            ChangeMainId("cassetterootcollection")();
+            $.connection.hub.start().done(function () {
+                hub.server.getCassetes();
+                hub.server.getItem(viewModel.id);
+                loadingStatus[viewModel.id] = false;
+            });
+        });
+    </script>
+</head>
+<body>
+    <p>{{Count()()}}</p>
+
+<p>Cassettes:</p>
+<table>
+    <tbody data-bind="foreach: list">
+    <tr>
+        <td>
+            <button data-bind="text: Name, click: selectCassette"></button>
+        </td>
+        <td>
+            <button data-bind="text: Path"></button>
+        </td>
+        <td>
+            <label>{{Status}}</label>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+{{NameorId($root.id)()}}
+
+
+{{#foreach: get($root.id, '^collection-item')()}}
+{{#foreach: get($data, 'in-collection')()}}
+Cодержится в
+<Button data-bind="text:NameorId($data)(), click:ChangeMainId($data)"></Button>
+{{/foreach}}
+{{/foreach}}
+
+
+
+{{#foreach: get($root.id, '^in-collection')()}}
+{{#foreach: get($data, 'collection-item')()}}
+содержит
+<Button data-bind="click:ChangeMainId($data)">
+    <div data-bind="text:NameorId($data)()"></div>
+    {{#foreach: get($data,'documenttype')()}}
+    {{#if: $data=='image/jpeg'}}
+    {{#foreach: get($parent, 'uri')()}}
+    <img src="uri/preview?u={{$data}}&width=100"/>
+    {{/foreach}}
+    {{/if}}
+    {{/foreach}}
+</Button>
+{{/foreach}}
+{{/foreach}}
+    
+{{#foreach: get(id,'uri')()}}
+<div id="main_image_template" uri="{{$data}}"></div>
+{{/foreach}}
+</body>
+</html>
