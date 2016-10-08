@@ -14,3 +14,4 @@ C:\Users\Admin\Source\Repos\next\WebCassetteManager\WebCassetteManager\GetImageF
 C:\Users\Admin\Source\Repos\next\WebCassetteManager\WebCassetteManager\GetImageFromDZPxCell\bin\Debug\GetImageFromDZPxCell.pdb
 C:\Users\Admin\Source\Repos\next\WebCassetteManager\WebCassetteManager\GetImageFromDZPxCell\obj\Debug\GetImageFromDZPxCell.exe
 C:\Users\Admin\Source\Repos\next\WebCassetteManager\WebCassetteManager\GetImageFromDZPxCell\obj\Debug\GetImageFromDZPxCell.pdb
+C:\Users\Admin\Source\Repos\next\WebCassetteManager\WebCassetteManager\GetImageFromDZPxCell\obj\Debug\GetImageFromDZPxCell.csprojResolveAssemblyReference.cache

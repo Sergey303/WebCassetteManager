@@ -30,8 +30,7 @@ namespace WebCassetteManager
 
         public void SaveCassettes()
         {
-            File.WriteAllText(
-                @"C:\Users\Admin\Source\Repos\next\next\WebCassetteManager\WebCassetteManager\cassettes.json",
+            File.WriteAllText(MvcApplication.CurrentDirectory()+@"\cassettes.json",
                 new JavaScriptSerializer().Serialize(Cassettes));
         }
 
@@ -39,8 +38,7 @@ namespace WebCassetteManager
         {
             return
                 new JavaScriptSerializer().Deserialize<List<CassetteModel>>(
-                    File.ReadAllText(
-                        @"C:\Users\Admin\Source\Repos\next\WebCassetteManager\WebCassetteManager\cassettes.json"));
+                    File.ReadAllText(MvcApplication.CurrentDirectory() + @"\cassettes.json"));
         }
 
         public CassetteContent LoadCassette(CassetteModel model)
@@ -52,11 +50,8 @@ namespace WebCassetteManager
                 foreach (var fileInfo in content.GetContent())
                 {
                     Store.AddFromTurtle(0, fileInfo.FullName);
-                    //  var @object = triple.Predicate == "uri"
-                    //? triple.Object.ToString().Replace("iiss://", "iiss_")
-                    //: triple.Object.ToString();
-                    model.Status = "loaded";
                 }
+                model.Status = "loaded";
             }
             return content;
         }

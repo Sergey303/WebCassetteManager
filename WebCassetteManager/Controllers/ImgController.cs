@@ -29,7 +29,7 @@ namespace WebCassetteManager.Controllers
             {
                 Content =
                     GetImageFromDZPxCell.GetImageFromDZPxCell.GetOneImgHtml(
-                        Path.Combine(ImgController.CurrentDirectory(),
+                        Path.Combine(MvcApplication.CurrentDirectory(),
                             @"0001.dzipx"), Request.Url.ToString().Replace("example", "")),
                 ContentType = "text/html"
             };
@@ -47,13 +47,6 @@ namespace WebCassetteManager.Controllers
             };
         }
 
-        public static string CurrentDirectory()
-        {
-            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            UriBuilder uri = new UriBuilder(codeBase);
-            var dirName = new DirectoryInfo(Path.GetDirectoryName(Uri.UnescapeDataString(uri.Path))).Parent.FullName;
-            return dirName;
-        }
 
    
 

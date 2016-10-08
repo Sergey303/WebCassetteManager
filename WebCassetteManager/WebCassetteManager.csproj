@@ -168,6 +168,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="cassette.html" />
     <Content Include="openseadragon\images\fullpage_grouphover.png" />
     <Content Include="openseadragon\images\fullpage_hover.png" />
     <Content Include="openseadragon\images\fullpage_pressed.png" />
@@ -208,7 +209,11 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
-    <Content Include="main image template.html" />
+    <Content Include="collection template.html" />
+    <Content Include="Scripts\hub.js" />
+    <Content Include="Scripts\import html.js" />
+    <Content Include="Scripts\model.js" />
+    <Content Include="Scripts\trash.js" />
     <Content Include="WinJS\css\ui-dark.css" />
     <Content Include="WinJS\css\ui-dark.min.css" />
     <Content Include="WinJS\css\ui-light.css" />
@@ -227,7 +232,7 @@
     <Content Include="WinJS\README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CassetesList.html" />
+    <Content Include="Main.html" />
     <Content Include="cassettes.json" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
