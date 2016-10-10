@@ -1,24 +1,31 @@
 ﻿<div id="intro-dm">
 
     <script type="text/html" id="collection template">
+        <div/>
+        Cодержится в
+        {{#if CallGetTriples($root.id, '^collection-item/in-collection/(name,uri)')()}}
+        {{/if}}
         {{#foreach: get($root.id, '^collection-item')()}}
         {{#foreach: get($data, 'in-collection')()}}
-        Cодержится в
         <Button data-bind="text:NameorId($data)(), click:ChangeMainId($data)"></Button>
         {{/foreach}}
         {{/foreach}}
 
-        содержит   {{#foreach: get($root.id, '^in-collection')()}}
-        {{#foreach: get($data, 'collection-item')()}}       
+        <div/>
+        содержит
+        {{#if CallGetTriples($root.id, '^in-collection/collection-item/(name,uri)')()}}
+        {{/if}}
+        {{#foreach: get($root.id, '^in-collection')()}}
+        {{#foreach: get($data, 'collection-item')()}}
         <Button data-bind="click:ChangeMainId($data)">
             <div data-bind="text:NameorId($data)()"></div>
             {{#foreach: get($data, 'uri')()}}
             {{#if IsImageTypeUri($data)()}}
             <img src="uri/preview?u={{$data}}&width=100"/>
             {{/if}}
-    {{/foreach}}
-</Button>
-{{/foreach}}
-{{/foreach}}
+            {{/foreach}}
+        </Button>
+        {{/foreach}}
+        {{/foreach}}
     </script>
 </div>

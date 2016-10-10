@@ -9,5 +9,4 @@ $.connection.hub.start().done(function () {
     //loadingStatus[viewModel.id] = false;
 
     ko.applyBindings(viewModel);
-    hub.server.getAllDirect(directsRequests);
 });
