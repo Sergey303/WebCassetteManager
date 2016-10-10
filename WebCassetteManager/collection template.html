@@ -1,20 +1,16 @@
 ﻿<div id="intro-dm">
-
     <script type="text/html" id="collection template">
         <div/>
-        Cодержится в
-        {{#if CallGetTriples($root.id, '^collection-item/in-collection/(name,uri)')()}}
-        {{/if}}
+        {{#if CallGetTriples(viewModel.id(), '^in-collection/collection-item/(name,uri)')}}
         {{#foreach: get($root.id, '^collection-item')()}}
         {{#foreach: get($data, 'in-collection')()}}
         <Button data-bind="text:NameorId($data)(), click:ChangeMainId($data)"></Button>
         {{/foreach}}
         {{/foreach}}
-
+        {{/if}}
         <div/>
         содержит
-        {{#if CallGetTriples($root.id, '^in-collection/collection-item/(name,uri)')()}}
-        {{/if}}
+                {{#if CallGetTriples(viewModel.id(), '^collection-item/in-collection/(name,uri)')}}
         {{#foreach: get($root.id, '^in-collection')()}}
         {{#foreach: get($data, 'collection-item')()}}
         <Button data-bind="click:ChangeMainId($data)">
@@ -27,5 +23,6 @@
         </Button>
         {{/foreach}}
         {{/foreach}}
+        {{/if}}
     </script>
 </div>

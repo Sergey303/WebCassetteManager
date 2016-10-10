@@ -283,6 +283,7 @@
     <Compile Include="CassettesHub.cs" />
     <Compile Include="Controllers\EditController.cs" />
     <Compile Include="Controllers\ImgController.cs" />
+    <Compile Include="Controllers\SPOController.cs" />
     <Compile Include="Controllers\UriController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

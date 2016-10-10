@@ -2,7 +2,6 @@
 
 var hub = $.connection.cassettesHub;
 hub.client.addtriple = Addtriple;
-hub.client.addbuffer = AddBuffer;
 $.connection.hub.start().done(function () {
     //hub.server.getCassetes();
     //hub.server.getItem(viewModel.id);

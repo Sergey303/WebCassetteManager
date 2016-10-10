@@ -41,36 +41,16 @@ namespace WebCassetteManager
         List<string[]> buffer = new List<string[]>();
         public void Return2Client(string subject, string predicate, string @object, bool isobj)
         {
-            buffer.Add(new[] {subject, predicate, @object, isobj ?"obj" :""});
-            if (buffer.Count >= 10) SendBuffered();
-
+                    Clients.Caller.addtriple(subject, predicate, @object, isobj);
         }
 
-        private void SendBuffered()
-        {
-            
-            Clients.Caller.addBuffer(buffer);
-            buffer.Clear();
-        }
 
-        public void GetInverseValuesBuffer(string obj, string predicate)
-        {
-            List<string>subjectsBuffer=new List<string>();
-            foreach (var subjVariant in CasssettesBD.CasssettesBd.Store.GetTriplesWithPredicateObject(new OV_iri(predicate), new OV_iri(obj)))
-            {
-                subjectsBuffer.Add(subjVariant.ToString());
-                if (subjectsBuffer.Count < 20) continue;
-                Clients.Caller.addBuffer(subjectsBuffer, predicate, obj);
-                subjectsBuffer.Clear();
-            }
-                Clients.Caller.addBuffer(subjectsBuffer, predicate, obj);
-        }
-        
+
         ///"^in-collection/collection-item/(name,uri)"
         public void GetTriplesFromPath(string subject, string path)
         {
             GetTriplesFromPathRecursive(subject, path);
-            SendBuffered();
+          //  SendBuffered();
         }
 
         private void GetTriplesFromPathRecursive(string subject, string path)
@@ -95,8 +75,7 @@ namespace WebCassetteManager
                     {
                         var predicate = pred;
                         foreach (var objectVariant in
-                            CasssettesBD.CasssettesBd.Store.GetTriplesWithSubjectPredicate(new OV_iri(subject),
-                                new OV_iri(predicate)))
+                            CasssettesBD.CasssettesBd.Store.GetTriplesWithSubjectPredicate(new OV_iri(subject),new OV_iri(predicate)))
                             Return2Client(subject, predicate, objectVariant.ToString(),
                                 objectVariant.Variant == ObjectVariantEnum.Iri);
                         //Clients.Caller.addtriple(subject, predicate, objectVariant.ToString(), true);

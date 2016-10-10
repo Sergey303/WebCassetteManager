@@ -93,21 +93,9 @@ function Addtriple(id, property, objvalue, isObjectIri) {
         appendTriple(objvalue, "^" + property, id);
 }
 
-function AddBuffer(buffer) {
-  //  alert(buffer.length);
-    $.each(buffer, function (i, triple) {
-       // alert(triple[0]);
-        appendTriple(triple[0], triple[1], triple[2]);
-        if(triple[3]==='obj')
-            appendTriple(triple[2], "^" + triple[1], triple[0]);
-    });
-    
-}
-
 function CallGetTriples(subject, path) {
     viewModel.notification();
     return ko.pureComputed(function () {
-        if (typeof subject === 'function') subject = subject();
         hub.server.getTriplesFromPath(subject, path);
         return true;
     });
