@@ -11,23 +11,13 @@
     <script src="Scripts/knockout.punches.min.js"></script>
     <script src="Scripts/model.js"></script>
     <script src="Scripts/hub.js"></script>
+    <link rel="import" href="/main template.html">
     <link rel="import" href="/collection template.html">
     <script src="Scripts/import html.js"></script>
 </head>
 <body>
 
 
-{{NameorId($root.id)()}}
 
-{{#template 'collection template' /}}
-
-   
-
-{{#foreach: get($root.id,'uri')()}}
-{{#if IsImageTypeUri($data)()}}
-    <a href="uri/original?u={{$data}}">оригинал</a>
-<iframe src="uri/doc?u={{$data}}" style="height: 800px; width: 100%;"></iframe>
-{{/if}}
-{{/foreach}}
 </body>
 </html>

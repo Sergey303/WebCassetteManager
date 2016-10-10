@@ -1,0 +1,13 @@
+﻿<div id="intro-dm">
+    
+    {{{NameorId($root.id)}}}
+
+    {{#template 'collection template' /}}
+
+    {{#foreach: get($root.id,'uri')}}
+    {{#if IsImageTypeUri($data)}}
+    <a href="uri/original?u={{$data}}">оригинал</a>
+    <iframe src="uri/doc?u={{$data}}" style="height: 800px; width: 100%;"></iframe>
+    {{/if}}
+    {{/foreach}}
+</div>

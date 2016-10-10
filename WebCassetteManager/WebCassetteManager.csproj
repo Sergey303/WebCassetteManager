@@ -169,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="cassette.html" />
+    <Content Include="main template.html" />
     <Content Include="openseadragon\images\fullpage_grouphover.png" />
     <Content Include="openseadragon\images\fullpage_hover.png" />
     <Content Include="openseadragon\images\fullpage_pressed.png" />
@@ -210,7 +211,6 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <Content Include="collection template.html" />
-    <Content Include="Scripts\hub.js" />
     <Content Include="Scripts\import html.js" />
     <Content Include="Scripts\model.js" />
     <Content Include="Scripts\trash.js" />

@@ -1,90 +1,61 @@
 ﻿var loadingStatus = {};
 var viewModel;
-ko.punches.enableAll();
 
-function GetItemById(id, predicate) {
+function get(id, predicate) {
+    if (typeof id === "function")
+        id = id();
     var key = id + '.' + predicate;
-    
-    var first = ko.utils.arrayFirst(viewModel.mydata(), function (item) {
-        return item.key === key;
-    });
-    if (first === null) {
-        if (loadingStatus[id + predicate] == null) {
-            if (predicate[0] === '^')
-                {}//hub.server.getInverseValue(id, predicate.substring(1));
+    var value = viewModel.data()[key];
+    if (value == null) {
+        if (loadingStatus[key] == null) {
+            if (predicate[0] === '^') {
+            } //hub.server.getInverseValue(id, predicate.substring(1));
             else hub.server.getDirectValue(id, predicate);
-            loadingStatus[id + predicate] = false;
+            loadingStatus[key] = false;
         }
-        //if (key === 'img1.uri') {
-        //    alert('null');
-        //}
         return null;
     } else {
-        //alert(key + " " + first.value());
-        //if (key === 'img1.uri') {
-        //    alert(first.value());
-        //}
-        return first.value;
+        return value;
     }
 }
 
-function get(idobservable, predicate) {
-    viewModel.notification();
-    return ko.pureComputed(function () {
-      //  viewModel.notification();
-       var id;
-    if (typeof idobservable === "function")
-        id = idobservable();
-    else id = idobservable;
-        return GetItemById(id, predicate);
-    }, this);
-}
 function NameorId(id) {
-    viewModel.notification();
-  return ko.pureComputed(function () {
-        var name = get(id, 'name')();
-   //     viewModel.notification();
+    //viewModel.notification();
+     var name = get(id, 'name');
         return name === null ? id : name;
-    });
 }
 function ChangeMainId(id) {
-    return function () {
-        viewModel.id = ko.observable(id);
-      //  ko.utils.arrayPushAll(viewModel.mydata, []);
-        viewModel.notification.notifySubscribers();
-      //  viewModel.mydata.notifySubscribers();
-    };
+    return function() {
+        viewModel.id(id);
+    }
 }
 
 function IsImageTypeUri(uri) {
-    viewModel.notification();
-    return ko.pureComputed(function () {
-       // viewModel.notification();
-       // alert("uri"+uri);
+   // viewModel.notification();
         if (uri === null) return false;
-
         if (typeof uri === "function")
             uri = uri();
-      //  alert("uri "+uri);
         var parts = uri.split('.');
-       // alert(parts.length);
         var ext = parts[parts.length - 1];
-      //  alert(ext);
-
         if (ext === "jpg" || ext === "tif" || ext==="bmp")
             return true;
         return false;
-    });
 }
 
 function appendTriple(id, property, objvalue) {
     var newkey = id + "." + property;
-     //  alert(newkey+' '+objvalue);
-    var array = GetItemById(id, property);
-    if (array === null) {
+    //  alert(newkey+' '+objvalue);
+    var data = viewModel.data();
+    var array = data[newkey]; //GetItemById(id, property);
+    if (array == null) {
         array = ko.observableArray([objvalue]);
-        ko.utils.arrayPushAll(viewModel.mydata, [{ key: newkey, value: array }]);
+        data[newkey] = array;
+       // ko.utils.arrayPushAll(viewModel.mydata, [{ key: newkey, value: array }]);
     } else if (array.indexOf(objvalue) === -1) ko.utils.arrayPushAll(array, [objvalue]);
+
+   
+    viewModel.data.notifySubscribers();
+    
 }
 
 function Addtriple(id, property, objvalue, isObjectIri) {
@@ -93,21 +64,24 @@ function Addtriple(id, property, objvalue, isObjectIri) {
         appendTriple(objvalue, "^" + property, id);
 }
 
-function CallGetTriples(subject, path) {
-    viewModel.notification();
-    return ko.pureComputed(function () {
-        hub.server.getTriplesFromPath(subject, path);
+function CallGetTriples(path) {
+    hub.server.getTriplesFromPath(viewModel.id(), path);
         return true;
-    });
 }
 
+var hub;
 $(function () {
     //  ko.punches.enableAll();
-
+    hub = $.connection.cassettesHub;
+    hub.client.addtriple = Addtriple;
     viewModel = {
-        notification: ko.observable(),
-
         id: ko.observable("cassetterootcollection"),
-        mydata: ko.observableArray()
+        data: ko.observable({})
     }
+    $.connection.hub.start().done(function () {
+        Import();
+        ko.punches.enableAll();
+        ko.applyBindings(viewModel);
+      
+    });
 });
