@@ -19,6 +19,7 @@ namespace WebCassetteManager.Controllers
             switch (ext)
             {
                 case ".tif":
+                case ".bmp":
                 case ".jpg":
                     var path = fullName + ".dzipx";
                     if (!System.IO.File.Exists(path))
@@ -29,7 +30,7 @@ namespace WebCassetteManager.Controllers
                         var originalPath = GetOriginalPath(cassetteModel, docId, ext);
                         //if (System.IO.File.Exists(originalPath)) GetImageFromDZPxCell.GetImageFromDZPxCell.
                     }
-                    var seadragonhtml = GetImageFromDZPxCell.GetImageFromDZPxCell.GetOneImgHtml(path, Request.Url.ToString().Replace("uri/doc", "img"));
+                    var seadragonhtml = GetImageFromDZPxCell.GetImageFromDZPxCell.GetOneImgHtml(path, Request.Url.AbsolutePath.Replace("uri/doc", "img/dzipart/"));
                     return Content(seadragonhtml, "text/html");
 
                 case ".unknown":
@@ -50,6 +51,7 @@ namespace WebCassetteManager.Controllers
             switch (ext)
             {
                 case ".tif":
+                case ".bmp":
                 case ".jpg":
                     var path = fullName + ".dzipx";
                     if (!System.IO.File.Exists(path))
@@ -60,6 +62,7 @@ namespace WebCassetteManager.Controllers
                         var originalPath = GetOriginalPath(cassetteModel, docId, ext);
                         //if (System.IO.File.Exists(originalPath)) GetImageFromDZPxCell.GetImageFromDZPxCell.
                     }
+
                     var bitmap = GetImageFromDZPxCell.GetImageFromDZPxCell.GetImageOfSize(path, width);
                     return new ImageResult(bitmap);
 
@@ -84,8 +87,9 @@ namespace WebCassetteManager.Controllers
             var doti = docIdext.IndexOf('.');
 
             ext = docIdext.Substring(doti);
-            docId = docIdext.Substring(0, docIdext.Length - doti);
-            if (docId.Length == 15) docId = docId.Substring(5);
+            docId = docIdext.Substring(0, docIdext.Length - ext.Length);
+           
+            if (docId.Length == 14) docId = docId.Substring(5);
             return cassetteModel;
         }
 
@@ -100,7 +104,8 @@ namespace WebCassetteManager.Controllers
             {
                 case ".tif":
                 case ".jpg":
-                    return new ImageResult(new Bitmap(origianalPath));
+                case ".bmp":
+                    return File(origianalPath, "image/jpeg");
                 case ".unknown":
                     return File(origianalPath, "text/text");
                 case ".html":

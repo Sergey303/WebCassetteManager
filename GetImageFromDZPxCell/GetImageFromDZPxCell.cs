@@ -54,6 +54,10 @@ namespace GetImageFromDZPxCell
                                                 new PTypeSequence(new PType(PTypeEnumeration.@byte))))))),
                             path));
                 }
+                else
+                {
+                    cell = id2cell[id];
+                }
 
                 Size maxSize = new Size((int) cell.Root.Field(0).Get(), (int) cell.Root.Field(1).Get());
                 int level = (int) cell.Root.Field(2).Count() - 1;
@@ -125,7 +129,6 @@ namespace GetImageFromDZPxCell
                         }
                     }
                 }
-                cell.Close();
                 return outputImage;
                 //Stopwatch timer=new Stopwatch();
                 //timer.Start();
@@ -157,7 +160,7 @@ namespace GetImageFromDZPxCell
 
         public static Dictionary<string, PxCell> id2cell = new Dictionary<string, PxCell>();
         public static Dictionary<string, string> path2id = new Dictionary<string, string>();
-        public static object locker = new object();
+        private static object locker = new object();
 
         public static Bitmap GetImageByPath(int level, int x, int y, string path)
         {
@@ -353,7 +356,7 @@ namespace GetImageFromDZPxCell
                 string id;
                 if (!path2id.TryGetValue(cellPath, out id))
                 {
-                    if(!File.Exists(cellPath)) return "File not exists "+cellPath;
+                    if (!File.Exists(cellPath)) return "File not exists " + cellPath;
                     cell =
                         new PxCell(
                             new PTypeRecord(new NamedType("width", new PType(PTypeEnumeration.integer)),
@@ -368,7 +371,12 @@ namespace GetImageFromDZPxCell
                     path2id.Add(cellPath, id);
                     id2cell.Add(id, cell);
                 }
-                return @"    <div id='openseadragon" + id + @"' >
+                else
+                {
+                    cell = id2cell[id];
+                }
+                if (cell == null) return "cell is null "+cellPath+" id:"+id;
+                    return @"    <div id='openseadragon" + id + @"' >
 
 </div>
   <script src='/openseadragon/openseadragon.min.js'></script>

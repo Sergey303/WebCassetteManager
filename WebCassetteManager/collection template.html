@@ -8,13 +8,12 @@
         {{/foreach}}
         {{/foreach}}
 
-        {{#foreach: get($root.id, '^in-collection')()}}
-        {{#foreach: get($data, 'collection-item')()}}
-        содержит
+        содержит   {{#foreach: get($root.id, '^in-collection')()}}
+        {{#foreach: get($data, 'collection-item')()}}       
         <Button data-bind="click:ChangeMainId($data)">
             <div data-bind="text:NameorId($data)()"></div>
             {{#foreach: get($data, 'uri')()}}
-            {{#if(IsImageTypeUri($data))}}
+            {{#if IsImageTypeUri($data)()}}
             <img src="uri/preview?u={{$data}}&width=100"/>
             {{/if}}
     {{/foreach}}

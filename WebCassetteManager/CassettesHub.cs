@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using System.Collections.Generic;
+using Microsoft.AspNet.SignalR;
 using RDFCommon.OVns;
 using SparqlQuery.SparqlClasses;
 using WebCassetteManager.Models;
@@ -9,7 +10,6 @@ namespace WebCassetteManager
     {
         public void GetDirectValue(string subj, string predicate)
         {
-
             foreach (var objectVariant in CasssettesBD.CasssettesBd.Store.GetTriplesWithSubjectPredicate(new OV_iri(subj), new OV_iri(predicate)))
             {
                 Clients.Caller.addtriple(subj, predicate, objectVariant.ToString(), objectVariant.Variant==ObjectVariantEnum.Iri);
@@ -17,10 +17,36 @@ namespace WebCassetteManager
         }
         public void GetInverseValue(string obj, string predicate)
         {
+            
             foreach (var subjVariant in CasssettesBD.CasssettesBd.Store.GetTriplesWithPredicateObject(new OV_iri(predicate), new OV_iri(obj)))
             {
-                Clients.Caller.addtriple(subjVariant.ToString(), predicate, obj, true);
+                Clients.Caller.addTriple(subjVariant.ToString(), predicate, obj);
             }
+            
+        }
+        public void GetAllDirect(params string[]subjPreds)
+        {
+            for (int i = 0; i < subjPreds.Length-1; i+=2)
+            {
+                string subj=subjPreds[i];
+                string predicate = subjPreds[i + 1];
+                foreach (var objectVariant in CasssettesBD.CasssettesBd.Store.GetTriplesWithSubjectPredicate(new OV_iri(subj), new OV_iri(predicate)))
+                {
+                    Clients.Caller.addtriple(subj, predicate, objectVariant.ToString(), objectVariant.Variant == ObjectVariantEnum.Iri);
+                }
+            }
+        }
+        public void GetInverseValuesBuffer(string obj, string predicate)
+        {
+            List<string>subjectsBuffer=new List<string>();
+            foreach (var subjVariant in CasssettesBD.CasssettesBd.Store.GetTriplesWithPredicateObject(new OV_iri(predicate), new OV_iri(obj)))
+            {
+                subjectsBuffer.Add(subjVariant.ToString());
+                if (subjectsBuffer.Count < 20) continue;
+                Clients.Caller.addBuffer(subjectsBuffer, predicate, obj);
+                subjectsBuffer.Clear();
+            }
+                Clients.Caller.addBuffer(subjectsBuffer, predicate, obj);
         }
         //public void GetCassetes()
         //{
@@ -118,6 +144,6 @@ namespace WebCassetteManager
         //    }
         //}
 
-
+         
     }
 }

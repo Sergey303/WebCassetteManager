@@ -9,7 +9,6 @@
     <script src="Scripts/knockout-3.4.0.debug.js"></script>
     <script src="/signalr/hubs"></script>
     <script src="Scripts/knockout.punches.min.js"></script>
- 
     <link rel="import" href="/collection template.html">
     <script src="Scripts/model.js"></script>
     <script src="Scripts/hub.js"></script>
@@ -21,9 +20,12 @@
 
 {{#template 'collection template' /}}
 
-{{#foreach: get(id,'uri')()}}
-{{#if(IsImageTypeUri($data))}}
-<iframe src="uri/document/{{$data}}" style="height: 800px; width: 100%;"></iframe>
+   
+
+{{#foreach: get($root.id,'uri')()}}
+{{#if IsImageTypeUri($data)()}}
+    <a href="uri/original?u={{$data}}">оригинал</a>
+<iframe src="uri/doc?u={{$data}}" style="height: 800px; width: 100%;"></iframe>
 {{/if}}
 {{/foreach}}
 </body>

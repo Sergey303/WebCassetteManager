@@ -21,6 +21,9 @@ namespace WebCassetteManager.Controllers
                 return new ImageResult(bitmap);
             }
         }
+       
+
+        #region depricated
 
         [Route("example")]
         public ActionResult GetImage()
@@ -48,7 +51,7 @@ namespace WebCassetteManager.Controllers
         }
 
 
-   
+
 
         // GET: Img
         [Route("jpeg/{width:int}/{height:int}/{disc}/{*path}")]
@@ -57,6 +60,9 @@ namespace WebCassetteManager.Controllers
             var bitmap = GetImageFromDZPxCell.GetImageFromDZPxCell.GetImageOfSize(disc + ":" + path, width, height);
             return new ImageResult(bitmap);
         }
+
+        #endregion
+
 
     }
     public class ImageResult : ActionResult
